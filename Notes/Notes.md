@@ -40,6 +40,7 @@ Number of 6-input LUTS = 16+32+32+4 = 84 (maybe 68)
 **TASK 2.B**
 ---
 ![img_1.png](img_1.png)
+C should be set to a always based on the given algorithm(?)
 ---
 
 

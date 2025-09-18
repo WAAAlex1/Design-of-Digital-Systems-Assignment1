@@ -20,10 +20,12 @@ module gcd (
     output logic          ack,    // Input received / Computation is complete.
     output logic [15 : 0] C       // The result.
 );
-    typedef enum logic [1 : 0] { idleA, sampleA, ackA, idleB, sampleB, compare
-cavvvv    , calc, ackResult } state_t; // Input your own state names here
+    typedef enum logic [3 : 0] {
+        idleA, sampleA, ackA, idleB, sampleB, compare1, compare2, calc, ackResult
+        } state_t; // Input your own state names here
 
-    shortint unsigned reg_a, next_reg_a, reg_b, next_reg_b, compareReg;
+    shortint unsigned reg_a, next_reg_a, reg_b, next_reg_b;
+    shortint signed compareReg, next_reg_compare;
 
     state_t current_state, next_state;
 
@@ -31,11 +33,13 @@ cavvvv    , calc, ackResult } state_t; // Input your own state names here
     always_comb begin
 
         next_state = current_state;
-        next_reg_a = '0;
-        next_reg_b = '0;
+        next_reg_a = reg_a;
+        next_reg_b = reg_b;
+        next_reg_compare = '0;
+        ack = '0;
+        C = 'Z;
 
-        case (state)
-
+        case (current_state)
             idleA:
                 begin
                     if(req) next_state = sampleA;
@@ -57,16 +61,19 @@ cavvvv    , calc, ackResult } state_t; // Input your own state names here
                 end
             sampleB:
                 begin
-                    next_state = compare;
+                    next_state = compare1;
                     next_reg_b = AB;
                 end
             compare:
                 begin
-
-                    compareReg = a - b;
-
-
+                    next_reg_compare = reg_a - reg_b;
+                    next_state = compare2;
+                end
+            compare2:
+                begin
                     //If dif is 0 then skip to ackResult
+                    if(compareReg =='0) next_state = ackResult;
+                    else next_state = calc;
                 end
             calc:
                 begin
@@ -92,26 +99,22 @@ cavvvv    , calc, ackResult } state_t; // Input your own state names here
                     C = a;
                     next_state = idleA;
                 end
+            default: next_state = idleA;
         endcase
     end
 
-    // Register
+    // Registers
     always_ff @(posedge clk or posedge reset) begin
-
         if (reset) begin
-
             current_state <= idleA;
             reg_a <= '0;
             reg_b <= '0;
 
         end else begin
-
             current_state <= next_state;
-            if(state == sampleA) reg_a <= next_reg_a;
-            if(state == sampleB) reg_b <= next_reg_b;
-
+            compareReg <= next_reg_compare;
+            reg_a <= next_reg_a;
+            reg_b <= next_reg_b;
         end
-
     end
-
 endmodule

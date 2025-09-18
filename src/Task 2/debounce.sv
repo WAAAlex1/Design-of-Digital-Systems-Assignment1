@@ -1,5 +1,17 @@
+// -----------------------------------------------------------------------------
+//
+//  Title      :  System Verilog debouncer
+//             :
+//  Developers :  Otto Westy Rasmussen
+//             :
+//  Purpose    :  Debouncer for mechanical switches on Nexys A7-100T board
+//             :
+//  Revision   : 02203 fall 2025 v.2.0
+//
+// -----------------------------------------------------------------------------
+
 module debounce #(
-    parameter n = 20  // filter of 2^n * 10ns = 10ms
+    parameter n = 2  // filter of 2^n * 10ns = 10ms
 ) (                   // n should be set to 20 when synthesizing and 2 when simulating.
     input  logic clk,
     input  logic reset,
@@ -98,7 +110,7 @@ module debounce #(
 
       wait0: begin
         db_level = 1;
-        if (sw_reg2) begin
+        if (!sw_reg2) begin
           q_dec = 1;
           if (q_zero) begin
             state_next = zero;
