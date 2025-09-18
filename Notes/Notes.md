@@ -8,9 +8,9 @@ are D-flip-flops and 6-input LUT’s. Estimate how many flip-flops and LUTs are
 needed to implement the data-path? Briefly explain your estimate.*
 ---
 
-Number of FFs = 2
+Number of FFs = 32
 * 2x Needed for encoding state (not included for data-path)
-* 2x Needed for storing operands
+* 2x Needed for storing operands (16 FF each)
 
 Number of 6-input LUTS = 16+32+32+4 = 84 (maybe 68)
 
