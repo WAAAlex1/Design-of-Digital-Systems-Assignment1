@@ -11,6 +11,7 @@
 //
 // -----------------------------------------------------------------------------
 
+
 module gcd (
   input  logic        clk,
   input  logic        reset,
@@ -21,7 +22,7 @@ module gcd (
 );
 
   typedef enum logic [3:0] {
-    idleA=0, sampleA=1, ackA=2, idleB=3, sampleB=4, compare=5, subA=6, subB=7, ackResult=8
+    idleA=0, sampleA=1, ackA=2, idleB=3, sampleB=4, compare=5, sub=6, ackResult=7
   } state_t; // Input your own state names here
 
   state_t state, next_state;
@@ -31,8 +32,6 @@ module gcd (
 
     // Combinatorial logic
   always_comb begin
-
-    // Default assignments
     next_state = state;
     next_reg_a = reg_a;
     next_reg_b = reg_b;
@@ -40,66 +39,52 @@ module gcd (
     C   = 16'd0;
 
     case (state)
-
-      // Idle state, wait for request
-      idleA:
+      idleA: 
         if (req) next_state = sampleA;
 
-      // Sample state, get first operand. Only one cycle.
-      sampleA:
+      sampleA: 
       begin
         next_reg_a = AB;
         next_state = ackA;
       end
 
-      // Acknowledge A state, set ack. Stay until req goes low.
-      ackA:
+      ackA: 
       begin
         ack = 1'b1;
-        if (!req) next_state = idleB;
+        if (!req) next_state = idleB; 
       end
 
-      // idle state, wait for second request.
-      idleB:
+      idleB: 
       begin
         if (req) next_state = sampleB;
-      end
+      end  
 
-      // sample state, get second operand. Only one cycle.
-      sampleB:
+      sampleB: 
       begin
           next_reg_b = AB;
           next_state = compare;
       end
 
-      // compare state, finish, subA or subB
-      compare:
+      compare: 
       begin
         if (reg_a == reg_b) next_state = ackResult;
-        else if (reg_a > reg_b) next_state = subA;
-        else next_state = subB;
+        else next_state = sub;
       end
 
-      // subtract A state
-      subA:
+      sub: 
       begin
-        next_reg_a = reg_a - reg_b;
+        if(reg_a > reg_b) begin        
+            next_reg_a = reg_a - reg_b;
+        end else next_reg_b = reg_b - reg_a;
+        
         next_state = compare;
       end
-
-      // subtract B state
-      subB:
-      begin
-        next_reg_b = reg_b - reg_a;
-        next_state = compare;
-      end
-
-      // Final state, output result. Just use regA. wait for req to return.
-      ackResult:
+      
+      ackResult: 
       begin
         ack = 1'b1;
         C = reg_a;
-        if (!req) next_state = idleA;
+        if (!req) next_state = idleA; 
       end
 
       default: next_state = idleA;
