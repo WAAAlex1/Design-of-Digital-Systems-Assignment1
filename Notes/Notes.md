@@ -1,6 +1,7 @@
 
 
-**TASK 0.B** 
+**TASK 0.B**
+
 ---
 *Assume that the data-path is implemented as shown in Figure 2, that A, B, and C are
 16-bit unsigned integers, and that the technology primitives available on the FPGA
@@ -8,8 +9,8 @@ are D-flip-flops and 6-input LUT’s. Estimate how many flip-flops and LUTs are
 needed to implement the data-path? Briefly explain your estimate.*
 ---
 
-Number of FFs = 32
-* 2x Needed for encoding state (not included for data-path)
+Number of FFs = 36
+* 4x Needed for encoding state (not included for data-path)
 * 2x Needed for storing operands (16 FF each)
 
 Number of 6-input LUTS = 16+32+32+4 = 84 (maybe 68)
