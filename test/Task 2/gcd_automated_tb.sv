@@ -140,7 +140,10 @@ module gcd_automated_tb ();
   endtask;
 
   // Helper function to calculate expected GCD using Euclidean algorithm
-  function automatic shortint unsigned calculate_gcd(shortint unsigned a, shortint unsigned b);
+  function automatic shortint unsigned calculate_gcd(
+    input shortint unsigned a, 
+    input shortint unsigned b
+  );
     shortint unsigned temp;
     
     // Handle zero cases

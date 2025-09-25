@@ -11,7 +11,6 @@
 //
 // -----------------------------------------------------------------------------
 
-
 module gcd (
   input  logic        clk,
   input  logic        reset,
@@ -27,8 +26,31 @@ module gcd (
 
   state_t state, next_state;
   
+  // Standard signals
   shortint unsigned reg_a, next_reg_a;
   shortint unsigned reg_b, next_reg_b;
+
+  // Optimizations signals for Operator sharing
+  shortint unsigned op1, op2, res;
+
+  // Operator sharing logic
+  always_comb begin
+
+    if(reg_a > reg_b) begin
+
+      op1 = reg_a;
+      op2 = reg_b;
+
+    end else begin
+
+      op1 = reg_b;
+      op2 = reg_a;
+      
+    end
+
+    res = op1 - op2;
+
+  end 
 
     // Combinatorial logic
   always_comb begin
@@ -61,8 +83,8 @@ module gcd (
 
       sampleB: 
       begin
-          next_reg_b = AB;
-          next_state = compare;
+        next_reg_b = AB;
+        next_state = compare; 
       end
 
       compare: 
@@ -73,9 +95,8 @@ module gcd (
 
       sub: 
       begin
-        if(reg_a > reg_b) begin        
-            next_reg_a = reg_a - reg_b;
-        end else next_reg_b = reg_b - reg_a;
+        if(reg_a > reg_b) next_reg_a = res;
+        else next_reg_b = res;
         
         next_state = compare;
       end
