@@ -20,7 +20,7 @@ module gcd (
   output logic [15:0] C
 );
 
-  typedef enum logic [3:0] {
+  typedef enum logic [2:0] {
     idleA=0, sampleA=1, ackA=2, idleB=3, sampleB=4, compare=5, sub=6, ackResult=7
   } state_t; // Input your own state names here
 
