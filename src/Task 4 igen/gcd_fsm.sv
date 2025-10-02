@@ -24,7 +24,6 @@ module gcd_fsm (
     end
 
     always_comb begin
-        // defaults
         ack        = 0;
         ABorALU    = 1;   
         LDA        = 0;
