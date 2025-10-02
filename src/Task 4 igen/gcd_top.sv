@@ -11,7 +11,6 @@ module gcd_top (
     logic [1:0]  FN;
     logic [15:0] reg_a_out, reg_b_out, C_init, Y;
     logic        Z, N;
-    logic        comp_done;
 
     gcd_dp datapath (
         .clk(clk),
@@ -38,14 +37,10 @@ module gcd_top (
         .ABorALU(ABorALU),
         .LDA(LDA),
         .LDB(LDB),
-        .FN(FN),
-        .comp_done(comp_done)
+        .FN(FN)
     );
     
-    always_comb begin
-        if (comp_done) C = reg_a_out;
-        else C = 0;
-    end
+    assign C = reg_a_out;
    
 
 endmodule

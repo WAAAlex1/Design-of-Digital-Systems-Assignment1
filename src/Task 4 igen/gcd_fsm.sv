@@ -8,8 +8,7 @@ module gcd_fsm (
     output logic        ABorALU,
     output logic        LDA,
     output logic        LDB,
-    output logic [1:0]  FN,
-    output logic        comp_done
+    output logic [1:0]  FN
 );
 
     typedef enum logic [3:0] {
@@ -21,12 +20,11 @@ module gcd_fsm (
 
     always_ff @(posedge clk or posedge reset) begin
         if (reset) state <= idle_a;
-        else       state <= next_state;
+        else state <= next_state;
     end
 
     always_comb begin
         // defaults
-        comp_done  = 0;
         ack        = 0;
         ABorALU    = 1;   
         LDA        = 0;
@@ -36,7 +34,6 @@ module gcd_fsm (
 
         case (state)
             idle_a: begin
-                comp_done = 0;
                 if (req) next_state = sample_a;
             end
 
@@ -66,7 +63,7 @@ module gcd_fsm (
                 FN      = 2'b00;   
                 if (Z) next_state = done;     
                 else if (!N) next_state = sub_a; 
-                else next_state = sub_b;         
+                else next_state = sub_b;        
             end
             
             sub_a: begin
@@ -85,7 +82,6 @@ module gcd_fsm (
 
             done: begin
                 ack = 1;
-                comp_done = 1;
                 if (!req) next_state = idle_a;
             end
 
